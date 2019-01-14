@@ -8,15 +8,15 @@ void error(const char *msg) {
 }
 
 void melangerDeck() {
-    int i;
-    int index1,index2,tmp;
-    for (i=0;i<1000;i++) {
-        index1=rand()%NBJOUEURS;
-        index2=rand()%NBJOUEURS;
-        tmp=deck[index1];
-        deck[index1]=deck[index2];
-        deck[index2]=tmp;
-    }
+	int i;
+	int index1,index2,tmp;
+	for (i=0;i<1000;i++) {
+		index1=rand()%NBJOUEURS;
+		index2=rand()%NBJOUEURS;
+		tmp=deck[index1];
+		deck[index1]=deck[index2];
+		deck[index2]=tmp;
+	}
 }
 
 void createTable() {
@@ -102,10 +102,10 @@ void createTable() {
 } 
 
 void printDeck() {
-    int i,j;
-    for (i = 0 ; i < NBCARTES ; i++) {
-    	printf("%d %s\n",deck[i],nomcartes[deck[i]]);
-    }
+	int i,j;
+	for (i = 0 ; i < NBCARTES ; i++) {
+		printf("%d %s\n",deck[i],nomcartes[deck[i]]);
+	}
 	for (i = 0 ; i < NBJOUEURS ; i++) {
 		for (j = 0 ; j < NBOBJETS ; j++) {
 			printf("%2.2d ",tableCartes[i][j]);
@@ -115,53 +115,53 @@ void printDeck() {
 }
 
 void printClients() {
-    int i;
-    for (i = 0 ; i < nbClients ; i++) {
-    	printf("%d: %s %5.5d %s\n",i,tcpClients[i].ipAddress, tcpClients[i].port, tcpClients[i].name);
-    }
+	int i;
+	for (i = 0 ; i < nbClients ; i++) {
+		printf("%d: %s %5.5d %s\n",i,tcpClients[i].ipAddress, tcpClients[i].port, tcpClients[i].name);
+	}
 }
 
 int findClientByName(char *name) {
-    int i;
-    for (i = 0 ; i < nbClients ; i++) {
-    	if (strcmp(tcpClients[i].name,name)==0) {
-    		return i;
-    	}
-    }
-    return -1;
+	int i;
+	for (i = 0 ; i < nbClients ; i++) {
+		if (strcmp(tcpClients[i].name,name)==0) {
+			return i;
+		}
+	}
+	return -1;
 }
 
 void sendMessageToClient(char *clientip,int clientport,char *mess) {
-    int sockfd, portno, n;
-    struct sockaddr_in serv_addr;
-    struct hostent *server;
-    char buffer[256];
-    sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    server = gethostbyname(clientip);
+	int sockfd, portno, n;
+	struct sockaddr_in serv_addr;
+	struct hostent *server;
+	char buffer[256];
+	sockfd = socket(AF_INET, SOCK_STREAM, 0);
+	server = gethostbyname(clientip);
 
-    if (server == NULL) {
-    	error("ERROR, no such host");
-    }
-
-    bzero((char *) &serv_addr, sizeof(serv_addr));
-    serv_addr.sin_family = AF_INET;
-    bcopy((char *)server->h_addr, (char *)&serv_addr.sin_addr.s_addr, server->h_length);
-    serv_addr.sin_port = htons(clientport);
-    
-    if (connect(sockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0) {
-    	error("ERROR connecting");
+	if (server == NULL) {
+		error("ERROR, no such host");
 	}
 
-    sprintf(buffer,"%s\n",mess);
-    n = write(sockfd,buffer,strlen(buffer));
-    close(sockfd);
+	bzero((char *) &serv_addr, sizeof(serv_addr));
+	serv_addr.sin_family = AF_INET;
+	bcopy((char *)server->h_addr, (char *)&serv_addr.sin_addr.s_addr, server->h_length);
+	serv_addr.sin_port = htons(clientport);
+	
+	if (connect(sockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0) {
+		error("ERROR connecting");
+	}
+
+	sprintf(buffer,"%s\n",mess);
+	n = write(sockfd,buffer,strlen(buffer));
+	close(sockfd);
 }
 
 void broadcastMessage(char *mess) {
-    int i;
-    for (i = 0 ; i < nbClients ; i++) {
-    	sendMessageToClient(tcpClients[i].ipAddress, tcpClients[i].port, mess);
-    }
+	int i;
+	for (i = 0 ; i < nbClients ; i++) {
+		sendMessageToClient(tcpClients[i].ipAddress, tcpClients[i].port, mess);
+	}
 }
 
 int main(int argc, char *argv[]) {
@@ -172,91 +172,93 @@ int main(int argc, char *argv[]) {
 	struct sockaddr_in serv_addr, cli_addr;
 	int n;
 	int i;
-    char com;
-    char clientIpAddress[256], clientName[256];
-    int clientPort;
-    int id;
-    char reply[256];
+	char com;
+	char clientIpAddress[256], clientName[256];
+	int clientPort;
+	int id;
+	char reply[256];
+	int joueurSel = 0, objetSel = 0, guiltSel = 0;
 
 	if (argc < 2) {
 		error("ERROR, no port provided");
 	}
 
-    sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    
-    if (sockfd < 0) {
-    	error("ERROR opening socket");
-    }
-    
-    bzero((char *) &serv_addr, sizeof(serv_addr));
-    portno = atoi(argv[1]);
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_addr.s_addr = INADDR_ANY;
-    serv_addr.sin_port = htons(portno);
-    
-    if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
-    	error("ERROR on binding");
+	sockfd = socket(AF_INET, SOCK_STREAM, 0);
+	
+	if (sockfd < 0) {
+		error("ERROR opening socket");
 	}
-    
-    listen(sockfd,5);
-    clilen = sizeof(cli_addr);
+	
+	bzero((char *) &serv_addr, sizeof(serv_addr));
+	portno = atoi(argv[1]);
+	serv_addr.sin_family = AF_INET;
+	serv_addr.sin_addr.s_addr = INADDR_ANY;
+	serv_addr.sin_port = htons(portno);
+	
+	if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
+		error("ERROR on binding");
+	}
+	
+	listen(sockfd,5);
+	clilen = sizeof(cli_addr);
 
 	printDeck();
 	melangerDeck();
 	createTable();
 	printDeck();
 	joueurCourant = 0;
-
+	joueurPerdant = 0;
+	nbPerdant = 0;
 	for (i = 0 ; i < NBJOUEURS ; i++) {
-    	strcpy(tcpClients[i].ipAddress,"localhost");
-    	tcpClients[i].port=-1;
-    	strcpy(tcpClients[i].name,"-");
+		strcpy(tcpClients[i].ipAddress,"localhost");
+		tcpClients[i].port=-1;
+		strcpy(tcpClients[i].name,"-");
 	}
 
-    while (1) {
-     	newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr, &clilen);
-     	
-     	if (newsockfd < 0) {
-     		error("ERROR on accept");
-     	}
-     	
-     	bzero(buffer,256);
-     	n = read(newsockfd,buffer,255);
-     	
-     	if (n < 0) {
-     		error("ERROR reading from socket");
-     	}
+	while (1) {
+	 	newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr, &clilen);
+	 	
+	 	if (newsockfd < 0) {
+	 		error("ERROR on accept");
+	 	}
+	 	
+	 	bzero(buffer,256);
+	 	n = read(newsockfd,buffer,255);
+	 	
+	 	if (n < 0) {
+	 		error("ERROR reading from socket");
+	 	}
 
-        printf("Received packet from %s:%d\nData: [%s]\n\n", inet_ntoa(cli_addr.sin_addr), ntohs(cli_addr.sin_port), buffer);
+		printf("Received packet from %s:%d\nData: [%s]\n\n", inet_ntoa(cli_addr.sin_addr), ntohs(cli_addr.sin_port), buffer);
 
-        if (fsmServer == 0) {
-        	switch (buffer[0]) {
-            	case 'C':
-                	sscanf(buffer,"%c %s %d %s", &com, clientIpAddress, &clientPort, clientName);
-                	printf("COM=%c ipAddress=%s port=%d name=%s\n",com, clientIpAddress, clientPort, clientName);
+		if (fsmServer == 0) {
+			switch (buffer[0]) {
+				case 'C':
+					sscanf(buffer,"%c %s %d %s", &com, clientIpAddress, &clientPort, clientName);
+					printf("COM=%c ipAddress=%s port=%d name=%s\n",com, clientIpAddress, clientPort, clientName);
 
-                	// fsmServer == 0 alors j'attends les connexions de tous les joueurs
-                    strcpy(tcpClients[nbClients].ipAddress,clientIpAddress);
-                    tcpClients[nbClients].port=clientPort;
-                    strcpy(tcpClients[nbClients].name,clientName);
-                    nbClients++;
+					// fsmServer == 0 alors j'attends les connexions de tous les joueurs
+					strcpy(tcpClients[nbClients].ipAddress,clientIpAddress);
+					tcpClients[nbClients].port=clientPort;
+					strcpy(tcpClients[nbClients].name,clientName);
+					nbClients++;
 
-                    printClients();
+					printClients();
 
 					// rechercher l'id du joueur qui vient de se connecter
-                    id = findClientByName(clientName);
-                    printf("id=%d\n",id);
+					id = findClientByName(clientName);
+					printf("id=%d\n",id);
 
 					// lui envoyer un message personnel pour lui communiquer son id
-                    sprintf(reply,"I %d",id);
-                    sendMessageToClient(tcpClients[id].ipAddress, tcpClients[id].port, reply);
+					sprintf(reply,"I %d",id);
+					sendMessageToClient(tcpClients[id].ipAddress, tcpClients[id].port, reply);
 
 					// Envoyer un message broadcast pour communiquer a tout le monde la liste des joueurs actuellement connectes
-                    sprintf(reply,"L %s %s %s %s", tcpClients[0].name, tcpClients[1].name, tcpClients[2].name, tcpClients[3].name);
-                    broadcastMessage(reply);
+					sprintf(reply,"L %s %s %s %s", tcpClients[0].name, tcpClients[1].name, tcpClients[2].name, tcpClients[3].name);
+					broadcastMessage(reply);
 
 					// Si le nombre de joueurs atteint 4, alors on peut lancer le jeu
-                    if (nbClients == 4) {
+					if (nbClients == 4) {
 						// On envoie ses cartes au joueur 0, ainsi que la ligne qui lui correspond dans tableCartes
 						sprintf(reply,"D %d %d %d %d %d %d %d %d %d %d %d", deck[0], deck[1], deck[2],
 							tableCartes[0][0], tableCartes[0][1], tableCartes[0][2], tableCartes[0][3],
@@ -280,33 +282,57 @@ int main(int argc, char *argv[]) {
 						// On envoie enfin un message a tout le monde pour definir qui est le joueur courant=0
 						sprintf(reply,"M 0");
 						broadcastMessage(reply);
-                    	fsmServer = 1;
+						fsmServer = 1;
 					}
 				break;
-            }
+			}
 		}
 		else if (fsmServer == 1) {
 			switch (buffer[0]) {
-                case 'G':
+				case 'G':
 					// RAJOUTER DU CODE ICI
+					sscanf(buffer,"G %d %d",&id, &guiltSel);
+					if (guiltSel == deck[12]) {
+						sprintf(reply, "W %d", joueurCourant);
+						broadcastMessage(reply);
+						return 0;
+					}
+					else {
+						joueurPerdant |= (1 << joueurCourant);
+						if (++nbPerdant >= 3) {
+							sprintf(reply, "W %d", joueurCourant);
+							broadcastMessage(reply);
+							return 0;
+						}
+					}
 					break;
-                case 'O':
+				case 'O':
 					// RAJOUTER DU CODE ICI
+					sscanf(buffer,"O %d %d", &id, &objetSel);
+					for (i = 0; i < 4; i++) {
+						if (i != id) {	
+							sprintf(reply,"V %d %d %d", i, objetSel, AVOIR_CARTE(tableCartes[i][objetSel]) );
+							broadcastMessage(reply);
+						}
+					}
 					break;
 				case 'S':
 					// RAJOUTER DU CODE ICI
-					// sscanf(buffer,"S %d %d %d", &gId, &joueurSel, &objetSel);
-					// if (gId == joueurCourant) {
-					// 	sprintf(reply,"V %d", tableCartes[joueurSel][objetSel]);
-					// 	broadcastMessage(reply);
-					// }
+					sscanf(buffer,"S %d %d %d", &id, &joueurSel, &objetSel);
+					sprintf(reply,"V %d %d %d", joueurSel, objetSel, tableCartes[joueurSel][objetSel]);
+					broadcastMessage(reply);
 					break;
-                default:
-                 	break;
+				default:
+				 	break;
 			}
-        }
-     	close(newsockfd);
-    }
-    close(sockfd);
-    return 0; 
+			do {
+				joueurCourant = (joueurCourant + 1) % 4;
+			} while (((joueurPerdant >> joueurCourant) & 0x1) == 1);
+			sprintf(reply,"M %d", joueurCourant);
+			broadcastMessage(reply);
+		}
+	 	close(newsockfd);
+	}
+	close(sockfd);
+	return 0; 
 }

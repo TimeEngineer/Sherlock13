@@ -12,6 +12,7 @@
 #define NBCARTES 13
 #define NBJOUEURS 4
 #define NBOBJETS 8
+#define AVOIR_CARTE(nbcarte) (nbcarte > 0 ? 100 : 0)
 
 struct _client {
     char ipAddress[40];
@@ -27,3 +28,5 @@ char *nomcartes[]= {"Sebastian Moran", "irene Adler", "inspector Lestrade",
   	"inspector Hopkins", "Sherlock Holmes", "John Watson", "Mycroft Holmes",
   	"Mrs. Hudson", "Mary Morstan", "James Moriarty"};
 int joueurCourant;
+char joueurPerdant;
+int nbPerdant;

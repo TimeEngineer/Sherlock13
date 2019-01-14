@@ -91,7 +91,7 @@ void sendMessageToServer(char *ipAddress, int portno, char *mess) {
 
 int main(int argc, char ** argv) {
 	int ret;
-	int i,j;
+	int i,j,k;
     int quit = 0;
     SDL_Event event;
 	int mx,my;
@@ -249,7 +249,7 @@ int main(int argc, char ** argv) {
 				case 'I':
 					// RAJOUTER DU CODE ICI
 					sscanf(gbuffer,"I %d", &gId);
-					printf("Votre id : %c\n", gId);
+					printf("Votre id : %d\n", gId); 
 					break;
 				// Message 'L' : le joueur recoit la liste des joueurs
 				case 'L':
@@ -270,11 +270,20 @@ int main(int argc, char ** argv) {
 				case 'M':
 					// RAJOUTER DU CODE ICI
 					printf("Le joueur courant est le joueur n° : %c\n", gbuffer[2]);
-					goEnabled = 1;
+					goEnabled = (int)((gbuffer[2] - '0') == gId);
+					
 					break;
 				// Message 'V' : le joueur recoit une valeur de tableCartes
 				case 'V':
 					// RAJOUTER DU CODE ICI
+					sscanf(gbuffer,"V %d %d %d", &i, &j, &k);
+					tableCartes[i][j] = k;
+					printf("Joueur[%d] = %d de carte[%d]\n", i, tableCartes[i][j], j);
+					break;
+				case 'W':
+					sscanf(gbuffer, "W %d", &i);
+					printf("Le joueur %d a gagné\n", i);
+					return 0;
 					break;
 			}
 			synchro=0;
