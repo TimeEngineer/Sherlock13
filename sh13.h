@@ -12,6 +12,10 @@
 
 #define NBJOUEURS 4
 #define NBOBJETS 8
+#define ETAT_GAGNE 1
+#define ETAT_PERTE -1
+#define ETAT_JOUER 0
+
 
 pthread_t thread_serveur_tcp_id;
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;

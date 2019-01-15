@@ -98,6 +98,7 @@ int main(int argc, char ** argv) {
 	char sendBuffer[256];
 	char lname[256];
 	int id;
+	int state;
 
     if (argc<6) {
     	error("<app> <Main server ip address> <Main server port> <Client ip address> <Client port> <player name>");
@@ -113,7 +114,7 @@ int main(int argc, char ** argv) {
  
     SDL_Window * window = SDL_CreateWindow("SDL2 SH13", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1024, 768, 0);
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, 0);
-    SDL_Surface *deck[13],*objet[8],*gobutton,*connectbutton;
+    SDL_Surface *deck[13],*objet[8],*gobutton,*connectbutton, *msg[2];
 	deck[0] = IMG_Load("SH13_0.png");
 	deck[1] = IMG_Load("SH13_1.png");
 	deck[2] = IMG_Load("SH13_2.png");
@@ -140,6 +141,9 @@ int main(int argc, char ** argv) {
 	gobutton = IMG_Load("gobutton.png");
 	connectbutton = IMG_Load("connectbutton.png");
 
+	msg[0] = IMG_Load("texte_lose.png");
+	msg[1] = IMG_Load("texte_win.png");
+
 	strcpy(gNames[0],"-");
 	strcpy(gNames[1],"-");
 	strcpy(gNames[2],"-");
@@ -163,7 +167,7 @@ int main(int argc, char ** argv) {
 	}
 	goEnabled=0;
 	connectEnabled=1;
-    SDL_Texture *texture_deck[13],*texture_gobutton,*texture_connectbutton,*texture_objet[8];
+    SDL_Texture *texture_deck[13],*texture_gobutton,*texture_connectbutton,*texture_objet[8], *texture_msg[2];
 	for (i=0;i<13;i++) {
 		texture_deck[i] = SDL_CreateTextureFromSurface(renderer, deck[i]);
 	}
@@ -172,6 +176,8 @@ int main(int argc, char ** argv) {
 	}
     texture_gobutton = SDL_CreateTextureFromSurface(renderer, gobutton);
     texture_connectbutton = SDL_CreateTextureFromSurface(renderer, connectbutton);
+    texture_msg[0] = SDL_CreateTextureFromSurface(renderer, msg[0]);
+    texture_msg[1] = SDL_CreateTextureFromSurface(renderer, msg[1]);
     TTF_Font* Sans = TTF_OpenFont("sans.ttf", 15);
     printf("Sans=%p\n",Sans);
 
@@ -250,6 +256,7 @@ int main(int argc, char ** argv) {
 					// RAJOUTER DU CODE ICI
 					sscanf(gbuffer,"I %d", &gId);
 					printf("Votre id : %d\n", gId); 
+					state = ETAT_JOUER;
 					break;
 				// Message 'L' : le joueur recoit la liste des joueurs
 				case 'L':
@@ -277,13 +284,30 @@ int main(int argc, char ** argv) {
 				case 'V':
 					// RAJOUTER DU CODE ICI
 					sscanf(gbuffer,"V %d %d %d", &i, &j, &k);
-					tableCartes[i][j] = k;
+					
+					if (tableCartes[i][j] == 100 || tableCartes[i][j] == -1) {
+						tableCartes[i][j] = k;
+					}
 					printf("Joueur[%d] = %d de carte[%d]\n", i, tableCartes[i][j], j);
 					break;
 				case 'W':
 					sscanf(gbuffer, "W %d", &i);
+					
+					if (i == gId) {
+						state = ETAT_GAGNE;
+						goEnabled = 0;
+					}
+					else
+						state = ETAT_PERTE;
+					
 					printf("Le joueur %d a gagné\n", i);
-					return 0;
+					//return 0;
+					break;
+				case 'X':
+					sscanf(gbuffer, "X %d", &i);
+					if (i == gId) 
+						state = ETAT_PERTE;
+					printf("Le joueur %d a perdu\n", i);
 					break;
 			}
 			synchro=0;
@@ -371,7 +395,7 @@ int main(int argc, char ** argv) {
         	for (j=0;j<8;j++) {
 				if (tableCartes[i][j]!=-1) {
 					char mess[10];
-					if (tableCartes[i][j]==100) {
+					if (tableCartes[i][j] == 100) {
 						sprintf(mess,"*");
 					}
 					else {
@@ -595,6 +619,17 @@ int main(int argc, char ** argv) {
 		if (connectEnabled==1) {
 	    	SDL_Rect dstrect = { 0, 0, 200, 50 };
 	    	SDL_RenderCopy(renderer, texture_connectbutton, NULL, &dstrect);
+		}
+
+		{
+			// Le message gagnant / perdant
+			SDL_Rect dstrect = { 750 - 25, 600 - 75, 300, 300 };
+			if(state == ETAT_PERTE) {
+			   	SDL_RenderCopy(renderer, texture_msg[0], NULL, &dstrect);
+			}
+			else if(state == ETAT_GAGNE) {
+				SDL_RenderCopy(renderer, texture_msg[1], NULL, &dstrect);
+			}
 		}
 
 	    //SDL_SetRenderDrawColor(renderer, 255, 0, 0, SDL_ALPHA_OPAQUE);

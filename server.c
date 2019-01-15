@@ -11,8 +11,8 @@ void melangerDeck() {
 	int i;
 	int index1,index2,tmp;
 	for (i=0;i<1000;i++) {
-		index1=rand()%NBJOUEURS;
-		index2=rand()%NBJOUEURS;
+		index1=rand()%NBCARTES;
+		index2=rand()%NBCARTES;
 		tmp=deck[index1];
 		deck[index1]=deck[index2];
 		deck[index2]=tmp;
@@ -166,6 +166,7 @@ void broadcastMessage(char *mess) {
 
 int main(int argc, char *argv[]) {
 
+	srand(time(NULL));
 	int sockfd, newsockfd, portno;
 	socklen_t clilen;
 	char buffer[256];
@@ -299,6 +300,8 @@ int main(int argc, char *argv[]) {
 					}
 					else {
 						joueurPerdant |= (1 << joueurCourant);
+						sprintf(reply, "X %d", joueurCourant);
+						broadcastMessage(reply);
 						if (++nbPerdant >= 3) {
 							sprintf(reply, "W %d", joueurCourant);
 							broadcastMessage(reply);
