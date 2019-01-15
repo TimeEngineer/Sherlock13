@@ -267,9 +267,7 @@ int main(int argc, char ** argv) {
 				// Message 'D' : le joueur recoit ses trois cartes
 				case 'D':
 					// RAJOUTER DU CODE ICI
-					sscanf(gbuffer,"D %d %d %d %d %d %d %d %d %d %d %d", &b[0], &b[1], &b[2],
-						&tableCartes[gId][0], &tableCartes[gId][1], &tableCartes[gId][2], &tableCartes[gId][3],
-						&tableCartes[gId][4], &tableCartes[gId][5], &tableCartes[gId][6], &tableCartes[gId][7]);
+					sscanf(gbuffer,"D %d %d %d", &b[0], &b[1], &b[2]);
 					printf("Vos cartes : %s %s %s\n", nbnoms[b[0]], nbnoms[b[1]], nbnoms[b[2]]);
 					break;
 				// Message 'M' : le joueur recoit le n° du joueur courant
@@ -317,7 +315,7 @@ int main(int argc, char ** argv) {
         SDL_Rect dstrect_grille = { 512-250, 10, 500, 350 };
         SDL_Rect dstrect_image = { 0, 0, 500, 330 };
         SDL_Rect dstrect_image1 = { 0, 340, 250, 330/2 };
-		SDL_SetRenderDrawColor(renderer, 255, 230, 230, 230);
+		SDL_SetRenderDrawColor(renderer, 7, 118, 189, 230);
 		SDL_Rect rect = {0, 0, 1024, 768}; 
 		SDL_RenderFillRect(renderer, &rect);
 
