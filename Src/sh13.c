@@ -115,34 +115,34 @@ int main(int argc, char ** argv) {
     SDL_Window * window = SDL_CreateWindow("SDL2 SH13", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1024, 768, 0);
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, 0);
     SDL_Surface *deck[13],*objet[8],*gobutton,*connectbutton, *msg[2];
-	deck[0] = IMG_Load("SH13_0.png");
-	deck[1] = IMG_Load("SH13_1.png");
-	deck[2] = IMG_Load("SH13_2.png");
-	deck[3] = IMG_Load("SH13_3.png");
-	deck[4] = IMG_Load("SH13_4.png");
-	deck[5] = IMG_Load("SH13_5.png");
-	deck[6] = IMG_Load("SH13_6.png");
-	deck[7] = IMG_Load("SH13_7.png");
-	deck[8] = IMG_Load("SH13_8.png");
-	deck[9] = IMG_Load("SH13_9.png");
-	deck[10] = IMG_Load("SH13_10.png");
-	deck[11] = IMG_Load("SH13_11.png");
-	deck[12] = IMG_Load("SH13_12.png");
+	deck[0] = IMG_Load("Img/SH13_0.png");
+	deck[1] = IMG_Load("Img/SH13_1.png");
+	deck[2] = IMG_Load("Img/SH13_2.png");
+	deck[3] = IMG_Load("Img/SH13_3.png");
+	deck[4] = IMG_Load("Img/SH13_4.png");
+	deck[5] = IMG_Load("Img/SH13_5.png");
+	deck[6] = IMG_Load("Img/SH13_6.png");
+	deck[7] = IMG_Load("Img/SH13_7.png");
+	deck[8] = IMG_Load("Img/SH13_8.png");
+	deck[9] = IMG_Load("Img/SH13_9.png");
+	deck[10] = IMG_Load("Img/SH13_10.png");
+	deck[11] = IMG_Load("Img/SH13_11.png");
+	deck[12] = IMG_Load("Img/SH13_12.png");
 
-	objet[0] = IMG_Load("SH13_pipe_120x120.png");
-	objet[1] = IMG_Load("SH13_ampoule_120x120.png");
-	objet[2] = IMG_Load("SH13_poing_120x120.png");
-	objet[3] = IMG_Load("SH13_couronne_120x120.png");
-	objet[4] = IMG_Load("SH13_carnet_120x120.png");
-	objet[5] = IMG_Load("SH13_collier_120x120.png");
-	objet[6] = IMG_Load("SH13_oeil_120x120.png");
-	objet[7] = IMG_Load("SH13_crane_120x120.png");
+	objet[0] = IMG_Load("Img/SH13_pipe_120x120.png");
+	objet[1] = IMG_Load("Img/SH13_ampoule_120x120.png");
+	objet[2] = IMG_Load("Img/SH13_poing_120x120.png");
+	objet[3] = IMG_Load("Img/SH13_couronne_120x120.png");
+	objet[4] = IMG_Load("Img/SH13_carnet_120x120.png");
+	objet[5] = IMG_Load("Img/SH13_collier_120x120.png");
+	objet[6] = IMG_Load("Img/SH13_oeil_120x120.png");
+	objet[7] = IMG_Load("Img/SH13_crane_120x120.png");
 
-	gobutton = IMG_Load("gobutton.png");
-	connectbutton = IMG_Load("connectbutton.png");
+	gobutton = IMG_Load("Img/gobutton.png");
+	connectbutton = IMG_Load("Img/connectbutton.png");
 
-	msg[0] = IMG_Load("texte_lose.png");
-	msg[1] = IMG_Load("texte_win.png");
+	msg[0] = IMG_Load("Img/texte_lose.png");
+	msg[1] = IMG_Load("Img/texte_win.png");
 
 	strcpy(gNames[0],"-");
 	strcpy(gNames[1],"-");
@@ -178,7 +178,7 @@ int main(int argc, char ** argv) {
     texture_connectbutton = SDL_CreateTextureFromSurface(renderer, connectbutton);
     texture_msg[0] = SDL_CreateTextureFromSurface(renderer, msg[0]);
     texture_msg[1] = SDL_CreateTextureFromSurface(renderer, msg[1]);
-    TTF_Font* Sans = TTF_OpenFont("sans.ttf", 15);
+    TTF_Font* Sans = TTF_OpenFont("Fonts/sans.ttf", 15);
     printf("Sans=%p\n",Sans);
 
 	/* Creation du thread serveur tcp. */
